@@ -1,5 +1,6 @@
-
 # Awesome AI Resources
+
+[English](README.md) | [中文](README.zh.md)
 
 A curated list of awesome resources related to artificial intelligence, focusing on large model hardware, large language models (LLMs), small language models (SLMs), vision solutions, Retrieval-Augmented Generation (RAG), AI-Generated Content (AIGC) including video, images, and music, fine-tuning, and reinforcement learning. This repository aims to collect high-quality tools, frameworks, models, tutorials, and guides to help developers, researchers, and enthusiasts in the AI space.
 
@@ -47,7 +48,7 @@ Resources for efficient small language models (SLMs) that run on edge devices or
 
 ## Vision Solutions
 
-Resources for computer vision schemes, including models, frameworks, and tools for image recognition, object detection, and visual processing.
+Resources for computer vision solutions, including models, frameworks, and tools for image recognition, object detection, and visual processing.
 
 - [Resource Name](link) - Description.
 - [Resource Name](link) - Description.
@@ -111,4 +112,4 @@ Contributions are welcome! Please read the [contribution guidelines](CONTRIBUTIN
 
 ## License
 
-This project is licensed under the CC0 1.0 Universal (CC0 1.0) License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
