@@ -8,7 +8,7 @@ Inspired by other awesome lists in the AI community, this repo emphasizes practi
 
 ## Table of Contents
 
-- [Large Model Hardware](#large-model-hardware)
+- [Hardware](#large-model-hardware)
 - [Large Language Models (LLMs)](#large-models-llms)
 - [Small Language Models (SLMs)](#small-models-slms)
 - [Vision Solutions](#vision-solutions)
