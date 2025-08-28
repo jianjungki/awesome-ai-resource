@@ -2,7 +2,7 @@
 
 [English](README.md) | [中文](README.zh.md)
 
-A curated list of awesome resources related to artificial intelligence, focusing on large model hardware, large language models (LLMs), small language models (SLMs), vision solutions, Retrieval-Augmented Generation (RAG), AI-Generated Content (AIGC) including video, images, and music, fine-tuning, and reinforcement learning. This repository aims to collect high-quality tools, frameworks, models, tutorials, and guides to help developers, researchers, and enthusiasts in the AI space.
+A curated list of awesome resources related to artificial intelligence, focusing on hardware, large language models (LLMs), small language models (SLMs), vision solutions, Retrieval-Augmented Generation (RAG), AI-Generated Content (AIGC) including video, images, and music, fine-tuning, and reinforcement learning. This repository aims to collect high-quality tools, frameworks, models, tutorials, and guides to help developers, researchers, and enthusiasts in the AI space.
 
 Inspired by other awesome lists in the AI community, this repo emphasizes practical and up-to-date resources as of 2025.
 
