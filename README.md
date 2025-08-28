@@ -22,7 +22,7 @@ Inspired by other awesome lists in the AI community, this repo emphasizes practi
 - [Contributing](#contributing)
 - [License](#license)
 
-## Large Model Hardware
+## Hardware
 
 Resources for hardware optimized for training, fine-tuning, and running large AI models, including GPUs, CPUs, and server setups.
 
@@ -30,7 +30,7 @@ Resources for hardware optimized for training, fine-tuning, and running large AI
 - [Resource Name](link) - Description.
 - [Resource Name](link) - Description.
 
-## Large Models (LLMs)
+## Large Language Models (LLMs)
 
 Curated list of top large language models (LLMs) available in 2025, including benchmarks, leaderboards, and access links.
 
@@ -38,7 +38,7 @@ Curated list of top large language models (LLMs) available in 2025, including be
 - [Resource Name](link) - Description.
 - [Resource Name](link) - Description.
 
-## Small Models (SLMs)
+## Small Language Models (SLMs)
 
 Resources for efficient small language models (SLMs) that run on edge devices or with lower computational requirements, ideal for resource-constrained environments.
 
