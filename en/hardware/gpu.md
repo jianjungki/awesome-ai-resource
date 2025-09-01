@@ -17,9 +17,9 @@
 | NVIDIA V100                     | 7.8         | 15.7        | -           | 31.4                 | -          | 250                | -          | 300     | 16GB/32GB | Volta        |
 | AMD MI300X                      | 81.7        | 163.4       | 653.7       | 1307.4               | 2614.9     | 2614.9             | -          | 750     | 192GB     | CDNA 3       |
 
-Ampere 增加了 BF16/TF32
-Hopper 增加了 FP8
-Blackwell 增加了 FP4
+- Ampere 增加了 BF16/TF32
+- Hopper 增加了 FP8
+- Blackwell 增加了 FP4
 
 国内禁售：
 **NVIDIA B200、A100、H100、A800、H800、L40、L40S、RTX 4090**
@@ -67,7 +67,6 @@ For China:
     - 太初元碁
         - T110
         - T100
-
 
 
 | GPU 型号          | FP64 TFLOPS | FP32 TFLOPS | BP16 TFLOPS | FP16 TFLOPS (Tensor) | INT8 TOPS (Tensor) | TDP (W) | VRAM |
