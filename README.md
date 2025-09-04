@@ -26,7 +26,7 @@ Inspired by other awesome lists in the AI community, this repo emphasizes practi
 
 Resources for hardware optimized for training, fine-tuning, and running large AI models, including GPUs, CPUs, and server setups.
 
-- [GPU](zh/hardware/gpu.md) - Description.
+- [GPU](zh/hardware/gpu.md) - Introducing GPU devices on the market, including NVIDIA, AMD, Huawei, etc.
 
 ## Large Language Models (LLMs)
 
