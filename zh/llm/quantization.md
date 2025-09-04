@@ -27,3 +27,14 @@
 | **高级/新兴方法** | FP8 Quantization | 使用8位浮点格式，平衡浮点精度和整数效率。 | 精度与效率平衡；硬件加速好；Reddit评估中常见。 | 硬件支持有限；不如INT低位压缩。 |
 | **高级/新兴方法** | Binarization | 极端1位量化，权重为±1。 | 最大压缩；加速极致；研究用于特定场景。 | 精度损失大；不适合通用LLM。 
 
+
+### 先进量化方案总结
+
+| 方案 | 描述 | 为什么最先进/低损失 | 效果 | 挑战 | 相关研究 |
+|------|------|----------------------|------|------|----------|
+| **SliM-LLM (Salience-Driven Mixed-Precision Quantization)** | 一种混合精度量化方法，使用显著性驱动（salience-driven）来分配不同位宽（e.g., 重要权重用更高位，非重要用2-bit），结合稀疏优化。支持极低平均位宽（~2-bit），通过显著性矩阵最小化误差。 | 在2025年OpenReview评估中，被评为2-bit LLM量化的SOTA（state-of-the-art），准确率损失<0.5%（在CommonsenseQA等基准上）。它解决了传统量化的异常值问题，实现无数据或少数据量化。 | 压缩率高达8-16x，推理速度提升2-3x；适用于大型模型如LLaMA-3。 | 实现需自定义框架，可能增加复杂性。 | OpenReview论文显示在70B模型上优于GPTQ/AWQ。[[11]](https://openreview.net/forum?id=PO9bBEPNWy) |
+| **SLiM Framework (One-shot Quantization and Sparsity)** | 一次性（one-shot）框架，同时应用量化与稀疏（sparsity），使用低计算开销算法（如低秩近似）在单次传递中压缩模型。支持动态位宽分配，聚焦于LLM的键-值缓存（KV-cache）优化。 | ICML 2025论文报告，在保持>99%准确率的同时，实现高效压缩（损失<1%）。它推进了“无痛”压缩，适用于大规模LLM，而不需多轮迭代。 | 内存减少60-80%，推理加速显著；特别适合边缘部署。 | 对稀疏硬件依赖强；可能需特定优化。 | ICML虚拟会议突出其在LLM上的鲁棒性。[[1]](https://icml.cc/virtual/2025/poster/46479) |
+| **SiLQ (Simple Large Language Model Quantization-Aware Training)** | 基于SmoothQuant的QAT变体，在训练中插入简单伪量化节点，支持8-bit权重/激活/缓存，无需复杂校准。通过范围扩展和平滑分布实现零损失量化。 | arXiv 2025论文显示，在LLaMA模型上实现“无准确性损失”（损失~0%），优于传统QAT。简化了过程，使QAT更易扩展到千亿参数模型。 | 精度保留率>99.5%，压缩4x+；适用于高精度需求场景。 | 训练开销高于PTQ；不适合已训模型。 | arXiv报告其在PTQ框架下的准确率提升。[[14]](https://arxiv.org/html/2507.16933) |
+| **Mixed-Precision Quantization (扩展非均匀量化)** | 允许权重/激活使用不同位宽（e.g., 敏感层用FP8，非敏感用INT4），结合聚类或码本优化。常与PTQ结合，使用显著性或Hessian分析分配精度。 | Springer 2025综述视其为SOTA扩展，能在平均4-bit下损失<1%，优于均匀量化。2025年研究显示在多模态LLM（MLLM）上效果最佳。 | 内存减少70-80%，准确率95%+；灵活性高，适用于异构硬件。 | 位宽分配需优化，可能增加复杂性。 | Springer文章和AMD Quark评估确认其低损失性能。[[15]](https://link.springer.com/article/10.1007/s40747-025-02019-z) [[16]](https://rocm.blogs.amd.com/artificial-intelligence/quark/README.html) |
+| **Extreme/1-Bit Quantization (如BitNet变体)** | 极端1-bit量化（权重为±1或三元），使用扰动分析和补偿机制最小化损失。结合QAT或PTQ，针对LLM的线性层优化。 | Medium 2025文章探讨，现代变体在大型模型上损失<2%，接近全精度。2025研究显示，通过补偿，保留几乎所有性能。 | 压缩率极高（32x+），速度提升10x+；适用于资源受限环境。 | 精度损失在复杂任务中更明显，需特定硬件。 | Medium和arXiv报告其在2025年的进展。[[3]](https://medium.com/%40akdemir_bahadir/extreme-quantization-do-1-bit-llms-actually-work-24966ce90c87) [[9]](https://arxiv.org/html/2508.16712v1) 
+
