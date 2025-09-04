@@ -26,40 +26,32 @@ Inspired by other awesome lists in the AI community, this repo emphasizes practi
 
 Resources for hardware optimized for training, fine-tuning, and running large AI models, including GPUs, CPUs, and server setups.
 
-- [Resource Name](link) - Description.
-- [Resource Name](link) - Description.
-- [Resource Name](link) - Description.
+- [GPU](zh/hardware/gpu.md) - Description.
 
 ## Large Language Models (LLMs)
 
 Curated list of top large language models (LLMs) available in 2025, including benchmarks, leaderboards, and access links.
 
-- [Resource Name](link) - Description.
-- [Resource Name](link) - Description.
-- [Resource Name](link) - Description.
+- [Model List](zh/llm/models.md) - Recently models and different model advantage show in the table.
+- [Research](zh/llm/research.md) - Research about llm, including Context Length、Architecture、Attention and etc.
+- [Quantization](zh/llm/quantization.md) - Introduce quantization including PTQ、QAT、GPTQ、AWQ and etc.
 
 ## Small Language Models (SLMs)
 
 Resources for efficient small language models (SLMs) that run on edge devices or with lower computational requirements, ideal for resource-constrained environments.
 
 - [Resource Name](link) - Description.
-- [Resource Name](link) - Description.
-- [Resource Name](link) - Description.
 
 ## Vision Solutions
 
 Resources for computer vision solutions, including models, frameworks, and tools for image recognition, object detection, and visual processing.
 
-- [Resource Name](link) - Description.
-- [Resource Name](link) - Description.
-- [Resource Name](link) - Description.
+- [VLLM](link) - Description.
 
 ## RAG
 
 Resources for Retrieval-Augmented Generation (RAG), including frameworks, tutorials, and best practices to enhance LLMs with external knowledge.
 
-- [Resource Name](link) - Description.
-- [Resource Name](link) - Description.
 - [Resource Name](link) - Description.
 
 ## AIGC
@@ -71,15 +63,11 @@ Resources for AI-Generated Content (AIGC), covering generative tools and models 
 Tools, models, and tutorials for AI-generated video content.
 
 - [Resource Name](link) - Description.
-- [Resource Name](link) - Description.
-- [Resource Name](link) - Description.
 
 ### Images
 
 Tools, models, and tutorials for AI-generated images.
 
-- [Resource Name](link) - Description.
-- [Resource Name](link) - Description.
 - [Resource Name](link) - Description.
 
 ### Music
@@ -87,23 +75,17 @@ Tools, models, and tutorials for AI-generated images.
 Tools, models, and tutorials for AI-generated music.
 
 - [Resource Name](link) - Description.
-- [Resource Name](link) - Description.
-- [Resource Name](link) - Description.
 
 ## Fine-Tuning
 
 Resources for fine-tuning AI models, including techniques, tools, and datasets for customizing pre-trained models.
 
 - [Resource Name](link) - Description.
-- [Resource Name](link) - Description.
-- [Resource Name](link) - Description.
 
 ## Reinforcement Learning
 
 Resources for reinforcement learning, including algorithms, frameworks, environments, and applications.
 
-- [Resource Name](link) - Description.
-- [Resource Name](link) - Description.
 - [Resource Name](link) - Description.
 
 ## Contributing
