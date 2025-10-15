@@ -1,0 +1,84 @@
+
+- [常用量化方案](#常用量化方案)
+- [先进量化方案总结](#先进量化方案总结)
+- [量化精度对比](#量化精度对比)
+
+
+### 常用量化方案
+- **后训练量化 (PTQ) 变体**：在训练后直接量化，无需重新训练；简单但可能损失精度。
+- **量化感知训练 (QAT) 相关**：训练过程中模拟量化；精度更高但资源密集。
+- **权重仅量化 (WOQ) 及扩展**：重点量化权重，激活保持高精度；适合推理优化。
+- **非均匀/结构化量化**：使用聚类或块级处理，非线性映射；处理分布不均。
+- **高级/新兴方法**：结合优化或特殊机制；常针对极低位宽或特定问题。
+
+| 分类组 | 方法 | 描述 | 优势 | 缺点/挑战 |
+|--------|------|------|------|-----------|
+| **后训练量化 (PTQ) 变体** | Post-Training Quantization (PTQ) | 在模型训练完成后，直接对权重和激活进行静态或动态量化，使用校准数据最小化误差。 | 简单快速，无需重新训练；显著减少内存（e.g., FP32到INT8减4倍）；易集成到框架如PyTorch。 | 可能导致精度损失，尤其是激活值；需要校准数据集优化。 |
+| **后训练量化 (PTQ) 变体** | Post-Training Dynamic Quantization (PTDQ) | PTQ的动态版本，推理时实时计算量化参数（如激活范围）。 | 适应输入变化，提升鲁棒性；无需预设校准；适合实时应用。 | 推理时额外计算开销；不如静态PTQ高效。 |
+| **后训练量化 (PTQ) 变体** | GPTQ (General Pre-trained Transformer Quantization) | 针对Transformer的PTQ，使用逐层Hessian近似最小化误差，支持INT3/INT4。 | 压缩率高，对大模型有效；无需大量数据；AutoGPTQ库易用。 | 计算密集，需要GPU；对异常值敏感。 |
+| **后训练量化 (PTQ) 变体** | AWQ (Activation-aware Weight Quantization) | 考虑激活分布量化权重，使用通道级缩放避免误差。 | 在低位宽下精度好；少量校准数据即可；适用于LLM推理。 | 需要激活统计；实现稍复杂。 |
+| **后训练量化 (PTQ) 变体** | SmoothQuant | 通过平滑激活分布简化量化，减少噪声，常与PTQ结合。 | 改善低精度性能，尤其激活层；与Microsoft框架兼容。 | 引入预处理步骤；对层依赖敏感。 |
+| **后训练量化 (PTQ) 变体** | Linear Quantization (Uniform Quantization) | 均匀线性映射浮点到整数，支持对称/非对称模式，作为基准方法。 | 简单高效；硬件支持广（如TensorRT）；易实现。 | 对范围极端值敏感，导致损失；需clipping优化。 |
+| **后训练量化 (PTQ) 变体** | Sequential MSE Quantization | 逐层最小化均方误差（MSE）选择量化参数，支持动态调整。 | 精度保留好；适用于异构硬件；Qualcomm推广用于移动端。 | 序列过程慢；层间依赖复杂。 |
+| **量化感知训练 (QAT) 相关** | Quantization-Aware Training (QAT) | 训练中插入伪量化节点，模拟低精度效果，使模型适应。 | 量化后精度更高；适合性能敏感应用；Hugging Face支持。 | 训练时间长，需要额外资源；不适用于已训模型。 |
+| **量化感知训练 (QAT) 相关** | QLoRA (Quantized Low-Rank Adaptation) | 结合LoRA和量化（INT4+），低秩矩阵更新参数，用于微调。 | 极大降低微调内存（e.g., 消费GPU微调70B模型）；高性能保留。 | 限于微调，非从零训练；BitsandBytes库依赖。 |
+| **权重仅量化 (WOQ) 及扩展** | Weight-Only Quantization (WOQ) | 仅量化权重，激活保持FP16等高精度。 | 减少存储需求，计算效率高；GPU/TPU友好；Intel工具支持。 | 激活仍需高内存；不完全优化激活。 |
+| **非均匀/结构化量化** | Non-Uniform Quantization | 使用k-means聚类或码本映射，非线性量化。 | 处理不均分布好；压缩率高；适用于高维参数。 | 码本优化复杂；重建开销大。 |
+| **非均匀/结构化量化** | Product Quantization (PQ) | 分解向量成子向量，用码本聚类量化，结构化压缩。 | 高效高维处理；支持分布式；向量DB集成好。 | 码本大小需调优；计算开销。 |
+| **非均匀/结构化量化** | Blockwise Quantization | 将权重分成小块独立量化，处理范围差异。 | 适应参数变异；精度更好；常用于LLM块级优化。 | 块划分复杂；可能增加延迟。 |
+| **非均匀/结构化量化** | ZeroQuant | 组级量化（group-wise），结合零点偏移，支持INT4以下。 | 处理分布不均；内存峰值低；Transformer兼容。 | 组大小调优难；少量噪声。 |
+| **非均匀/结构化量化** | Sparse-Quantized Representation (SpQR) | 稀疏+量化，异常值高精度，其余低位压缩存储。 | 压缩率50%+；推理加速；针对LLM异常值。 | 需硬件支持稀疏；实现复杂。 |
+| **高级/新兴方法** | Half-Quadratic Quantization (HQQ) | 无校准半二次优化量化，支持INT2/INT3。 | 无数据需求，速度快；性能接近QAT；Inferless推广。 | 对异常值敏感；可能需微调。 |
+| **高级/新兴方法** | Attention-Aware Weight Quantization | 用Hessian迹度量注意力权重重要性，选择性量化。 | 提升注意力层性能；减少误差；arXiv研究支持。 | Hessian计算开销；限于PTQ。 |
+| **高级/新兴方法** | FP8 Quantization | 使用8位浮点格式，平衡浮点精度和整数效率。 | 精度与效率平衡；硬件加速好；Reddit评估中常见。 | 硬件支持有限；不如INT低位压缩。 |
+| **高级/新兴方法** | Binarization | 极端1位量化，权重为±1。 | 最大压缩；加速极致；研究用于特定场景。 | 精度损失大；不适合通用LLM。 
+
+
+### 先进量化方案总结
+
+| 方案 | 描述 | 为什么最先进/低损失 | 效果 | 挑战 | 相关研究 |
+|------|------|----------------------|------|------|----------|
+| **SliM-LLM (Salience-Driven Mixed-Precision Quantization)** | 一种混合精度量化方法，使用显著性驱动（salience-driven）来分配不同位宽（e.g., 重要权重用更高位，非重要用2-bit），结合稀疏优化。支持极低平均位宽（~2-bit），通过显著性矩阵最小化误差。 | 在2025年OpenReview评估中，被评为2-bit LLM量化的SOTA（state-of-the-art），准确率损失<0.5%（在CommonsenseQA等基准上）。它解决了传统量化的异常值问题，实现无数据或少数据量化。 | 压缩率高达8-16x，推理速度提升2-3x；适用于大型模型如LLaMA-3。 | 实现需自定义框架，可能增加复杂性。 | OpenReview论文显示在70B模型上优于GPTQ/AWQ。[[11]](https://openreview.net/forum?id=PO9bBEPNWy) |
+| **SLiM Framework (One-shot Quantization and Sparsity)** | 一次性（one-shot）框架，同时应用量化与稀疏（sparsity），使用低计算开销算法（如低秩近似）在单次传递中压缩模型。支持动态位宽分配，聚焦于LLM的键-值缓存（KV-cache）优化。 | ICML 2025论文报告，在保持>99%准确率的同时，实现高效压缩（损失<1%）。它推进了“无痛”压缩，适用于大规模LLM，而不需多轮迭代。 | 内存减少60-80%，推理加速显著；特别适合边缘部署。 | 对稀疏硬件依赖强；可能需特定优化。 | ICML虚拟会议突出其在LLM上的鲁棒性。[[1]](https://icml.cc/virtual/2025/poster/46479) |
+| **SiLQ (Simple Large Language Model Quantization-Aware Training)** | 基于SmoothQuant的QAT变体，在训练中插入简单伪量化节点，支持8-bit权重/激活/缓存，无需复杂校准。通过范围扩展和平滑分布实现零损失量化。 | arXiv 2025论文显示，在LLaMA模型上实现“无准确性损失”（损失~0%），优于传统QAT。简化了过程，使QAT更易扩展到千亿参数模型。 | 精度保留率>99.5%，压缩4x+；适用于高精度需求场景。 | 训练开销高于PTQ；不适合已训模型。 | arXiv报告其在PTQ框架下的准确率提升。[[14]](https://arxiv.org/html/2507.16933) |
+| **Mixed-Precision Quantization (扩展非均匀量化)** | 允许权重/激活使用不同位宽（e.g., 敏感层用FP8，非敏感用INT4），结合聚类或码本优化。常与PTQ结合，使用显著性或Hessian分析分配精度。 | Springer 2025综述视其为SOTA扩展，能在平均4-bit下损失<1%，优于均匀量化。2025年研究显示在多模态LLM（MLLM）上效果最佳。 | 内存减少70-80%，准确率95%+；灵活性高，适用于异构硬件。 | 位宽分配需优化，可能增加复杂性。 | Springer文章和AMD Quark评估确认其低损失性能。[[15]](https://link.springer.com/article/10.1007/s40747-025-02019-z) [[16]](https://rocm.blogs.amd.com/artificial-intelligence/quark/README.html) |
+| **Extreme/1-Bit Quantization (如BitNet变体)** | 极端1-bit量化（权重为±1或三元），使用扰动分析和补偿机制最小化损失。结合QAT或PTQ，针对LLM的线性层优化。 | Medium 2025文章探讨，现代变体在大型模型上损失<2%，接近全精度。2025研究显示，通过补偿，保留几乎所有性能。 | 压缩率极高（32x+），速度提升10x+；适用于资源受限环境。 | 精度损失在复杂任务中更明显，需特定硬件。 | Medium和arXiv报告其在2025年的进展。[[3]](https://medium.com/%40akdemir_bahadir/extreme-quantization-do-1-bit-llms-actually-work-24966ce90c87) [[9]](https://arxiv.org/html/2508.16712v1) 
+
+
+
+### 量化精度对比
+
+
+| 量化方案 | 量化精度评估（基于2025年研究，损失最低=精度最高） | 为什么是最高/比较 | 相关细节 |
+|----------|-----------------------------------------------|---------------------|-----------|
+| **SiLQ (Simple Large Language Model Quantization-Aware Training)** | **最高（损失~0%，接近无损失）** | arXiv 2025论文显示，在LLaMA模型上实现“无准确性损失”，优于传统QAT和其他PTQ变体（如GPTQ损失1-2%）。它是QAT变体，通过简单伪量化节点和平滑分布实现零损失，精度保留率>99.5%。在CommonsenseQA等基准上，远超其他方案。 | 基于SmoothQuant，支持8-bit权重/激活/缓存；适用于高精度需求场景，但训练开销较高。相比SliM-LLM（<0.5%损失），SiLQ更接近零损失。 |
+| **SliM-LLM (Salience-Driven Mixed-Precision Quantization)** | 高（损失<0.5%） | OpenReview 2025评估中，2-bit SOTA，损失最小化通过显著性分配；在70B模型上优于GPTQ/AWQ。 | 混合精度，压缩率高，但自定义框架复杂。 |
+| **SLiM Framework (One-shot Quantization and Sparsity)** | 高（损失<1%） | ICML 2025报告，>99%准确率保留；一次性压缩，无需迭代。 | 结合稀疏，适合边缘，但硬件依赖。 |
+| **Mixed-Precision Quantization** | 高（损失<1%） | Springer 2025综述，在平均4-bit下损失最小；灵活位宽分配。 | 适用于多模态LLM，但优化复杂。 |
+| **Extreme/1-Bit Quantization (如BitNet变体)** | 中等（损失<2%） | Medium 2025探讨，通过补偿接近全精度，但复杂任务损失更明显。 | 压缩极高，但需特定硬件。 |
+| **QAT (Quantization-Aware Training)** | 高（损失<1-2%） | 训练中模拟量化，精度高于PTQ；Hugging Face支持。 | 资源密集，不适合已训模型。 |
+| **QLoRA** | 高（损失<1-2%） | 微调中量化，低秩更新；BitsandBytes实现，精度保留好。 | 限于微调，消费GPU友好。 |
+| **SmoothQuant** | 中等（损失1-3%） | 平滑激活，改善低精度；Microsoft兼容。 | 与PTQ结合，但层依赖敏感。 |
+| **GPTQ** | 中等（损失1-3%） | 逐层Hessian，INT3/INT4支持；AutoGPTQ易用。 | 计算密集，对异常值敏感。 |
+| **AWQ** | 中等（损失1-3%） | 激活感知，通道缩放；低位宽精度好。 | 需要激活统计。 |
+| **HQQ (Half-Quadratic Quantization)** | 中等（损失1-3%） | 无校准优化，INT2/INT3支持；速度快。 | 对异常值敏感，可能需微调。 |
+| **Attention-Aware Weight Quantization** | 中等（损失1-3%） | Hessian迹，选择性量化；提升注意力层。 | 计算开销高。 |
+| **ZeroQuant** | 中等（损失1-3%） | 组级量化，处理不均；内存低。 | 组大小调优难。 |
+| **SpQR (Sparse-Quantized Representation)** | 中等（损失1-3%） | 稀疏+量化，异常值高精度。 | 硬件支持需强。 |
+| **PTQ (Post-Training Quantization)** | 较低（损失2-5%） | 简单静态/动态量化；无需训练。 | 可能需校准数据集。 |
+| **PTDQ (Post-Training Dynamic Quantization)** | 较低（损失2-5%） | 实时参数；适应输入。 | 推理开销。 |
+| **WOQ (Weight-Only Quantization)** | 较低（损失2-5%） | 仅权重量化；计算高效。 | 激活仍高内存。 |
+| **Product Quantization (PQ)** | 较低（损失2-5%） | 结构化码本；高维高效。 | 重建开销。 |
+| **Sequential MSE Quantization** | 较低（损失2-5%） | 逐层MSE；精度保留好。 | 过程慢。 |
+| **Linear Quantization** | 最低（损失3-5%+） | 均匀映射；简单基准。 | 对极端值敏感。 |
+| **Non-Uniform Quantization** | 最低（损失3-5%+） | k-means聚类；分布好。 | 码本复杂。 |
+| **Blockwise Quantization** | 最低（损失3-5%+） | 块独立；适应变异。 | 划分复杂。 |
+| **FP8 Quantization** | 最低（损失3-5%+） | 8位浮点；平衡效率。 | 硬件有限。 |
+| **Binarization** | 最低（损失5%+） | 1位极端；压缩最大。 | 精度损失大。 |
+
+
+
+**说明**：  
+- **精度最高定义**：基于量化后准确率损失最小（从研究基准如CommonsenseQA、WikiText）。SiLQ在2025年报告中接近零损失，因此最高。QAT相关方法（如SiLQ、QAT、QLoRA）通常精度优于PTQ变体。  
+- **来源**：汇总自arXiv、ICML、Springer等2025研究；实际取决于模型/任务（e.g., LLaMA-3上SiLQ最佳）
+
